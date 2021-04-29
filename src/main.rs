@@ -1,3 +1,9 @@
+//In the interest of clarity, most of the following code is not mine; it belongs to the Piston "Spinning Square" demo 
+//This can be found at: https://github.com/PistonDevelopers/Piston-Tutorials/tree/master/getting-started
+//My sole contributions are the extra squares, and the extra transforms, which I created for the purpose of figuring out which way,
+//metaphorically, is up, since I have absolutely no experience at present with graphics (outside of ncurses).
+//Also, I changed the colour scheme of my squares, because the green bkg / red square was really hurting my eyes.
+//Also also, this has nothing to do with the project I'm currently working on, beyond as familiarization.
 extern crate glutin_window;
 extern crate graphics;
 extern crate opengl_graphics;
@@ -38,25 +44,25 @@ impl App {
                 .rot_rad(rotation)
                 .trans(-25.0, -25.0);
             
-                let transform2 = c
-                .transform
-                .trans(x,y)
-                .rot_rad(rotation)
-                .trans(25.0,25.0);
+            let transform2 = c
+               .transform
+               .trans(x,y)
+               .rot_rad(rotation)
+               .trans(25.0,25.0);
 
-                let transform3 = c
+            let transform3 = c
                 .transform
                 .trans(x,y)
                 .rot_rad(rotation)
                 .trans(-125.0,-125.0);
 
-                let transform4 = c
+            let transform4 = c
                 .transform
                 .trans(x,y)
                 .rot_rad(rotation)
                 .trans(25.0,-125.0);
 
-                let transform5 = c
+            let transform5 = c
                 .transform
                 .trans(x,y)
                 .rot_rad(rotation)
