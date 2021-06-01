@@ -1,9 +1,3 @@
-//In the interest of clarity, most of the following code is not mine; it belongs to the Piston "Spinning Square" demo 
-//This can be found at: https://github.com/PistonDevelopers/Piston-Tutorials/tree/master/getting-started
-//My sole contributions are the extra squares, and the extra transforms, which I created for the purpose of figuring out which way,
-//metaphorically, is up, since I have absolutely no experience at present with graphics (outside of ncurses).
-//Also, I changed the colour scheme of my squares, because the green bkg / red square was really hurting my eyes.
-//Also also, this has nothing to do with the project I'm currently working on, beyond as familiarization.
 extern crate glutin_window;
 extern crate graphics;
 extern crate opengl_graphics;
@@ -14,72 +8,35 @@ use opengl_graphics::{GlGraphics, OpenGL};
 use piston::event_loop::{EventSettings, Events};
 use piston::input::{RenderArgs, RenderEvent, UpdateArgs, UpdateEvent};
 use piston::window::WindowSettings;
+use n_body_sim::*;
 
-pub struct App {
+pub struct Sim {
     gl: GlGraphics, // OpenGL drawing backend.
-    rotation: f64,  // Rotation for the square.
 }
 
-impl App {
-    fn render(&mut self, args: &RenderArgs) {
+impl Sim {
+    fn render(&mut self, args: &RenderArgs, nbodies: &Nbodies) {
         use graphics::*;
-
-        const BLACK: [f32; 4] = [0.0, 0.0, 0.0, 0.0];
-        const WHITE: [f32; 4] = [1.0, 1.0, 1.0, 1.0];
-        const RED:   [f32; 4] = [1.0, 0.0,0.0,1.0];
-
-        let square1 = rectangle::square(0.0, 0.0, 50.0);
-        let square2 = rectangle::square(0.0,0.0,100.0);
+        use graphics::color::*;
         
-        let rotation = self.rotation;
-        let (x, y) = (args.window_size[0] / 2.0, args.window_size[1] / 2.0);
+        let square = rectangle::square(0.0, 0.0, 2.0);
 
         self.gl.draw(args.viewport(), |c, gl| {
             // Clear the screen.
             clear(BLACK, gl);
+            //Draw each body to the screen in its updated position
+            for body in &nbodies.bodies {
+                let transform = c
+                    .transform
+                    .trans(body.pos.0, body.pos.1);
 
-            let transform = c
-                .transform
-                .trans(x, y)
-                .rot_rad(rotation)
-                .trans(-25.0, -25.0);
-            
-            let transform2 = c
-               .transform
-               .trans(x,y)
-               .rot_rad(rotation)
-               .trans(25.0,25.0);
-
-            let transform3 = c
-                .transform
-                .trans(x,y)
-                .rot_rad(rotation)
-                .trans(-125.0,-125.0);
-
-            let transform4 = c
-                .transform
-                .trans(x,y)
-                .rot_rad(rotation)
-                .trans(25.0,-125.0);
-
-            let transform5 = c
-                .transform
-                .trans(x,y)
-                .rot_rad(rotation)
-                .trans(-125.0,25.0);
-
-            // Draw a box rotating around the middle of the screen.
-            rectangle(WHITE, square1, transform, gl);
-            rectangle(RED, square2, transform3, gl);
-            rectangle(RED, square2, transform4, gl);
-            rectangle(RED, square2, transform2, gl);
-            rectangle(RED, square2, transform5, gl);
+                    if body.pos.2 >= 0. {
+                       rectangle(RED, square, transform, gl);
+                    } else {
+                        rectangle(WHITE, square, transform, gl);
+                    }
+            }
         });
-    }
-
-    fn update(&mut self, args: &UpdateArgs) {
-        // Rotate 2 radians per second.
-        self.rotation += 2.0 * args.dt;
     }
 }
 
@@ -88,26 +45,24 @@ fn main() {
     let opengl = OpenGL::V3_2;
 
     // Create an Glutin window.
-    let mut window: Window = WindowSettings::new("SquareSpin", [200, 200])
+    let mut window: Window = WindowSettings::new("N-Body-Sim", [800, 800])
         .graphics_api(opengl)
         .exit_on_esc(true)
         .build()
         .unwrap();
 
     // Create a new game and run it.
-    let mut app = App {
+    let mut sim = Sim {
         gl: GlGraphics::new(opengl),
-        rotation: 0.0,
     };
 
     let mut events = Events::new(EventSettings::new());
+    let mut nbodies = Nbodies::new(1000);
+
     while let Some(e) = events.next(&mut window) {
         if let Some(args) = e.render_args() {
-            app.render(&args);
-        }
-
-        if let Some(args) = e.update_args() {
-            app.update(&args);
+            sim.render(&args,&nbodies);
+            nbodies.next();
         }
     }
 }
