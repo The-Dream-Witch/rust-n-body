@@ -4,8 +4,8 @@ use std::ops;
 use std::default::Default;
 
 
-//const G: f64 = 6.67e11;
-const DT: f64 = 0.01;
+const G: f64 = 6.67e-11;
+const DT: f64 = 1000.;
 
 #[derive(Clone,Debug)]
 pub struct Nbodies {
@@ -40,8 +40,8 @@ impl Nbodies {
                 mags.push(interactions[i].get_scalar());
                 
                 //Calculate and apply new velocities
-                self.bodies[i].vel -= interactions[k] * (mass2 * mags[k]);
-                self.bodies[j].vel += interactions[k] * (mass1 * mags[k]);
+                self.bodies[i].vel -= interactions[k] * (mass2 * mags[k]) * G;
+                self.bodies[j].vel += interactions[k] * (mass1 * mags[k]) * G;
                 k +=1;
             }
         }

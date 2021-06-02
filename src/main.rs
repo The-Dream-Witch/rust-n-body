@@ -30,14 +30,14 @@ impl Sim {
                     .transform
                     .trans(body.pos.0, body.pos.1);
                     
-                    let size = (body.pos.2/100.).ceil();
-                    let square = rectangle::square(0.0, 0.0, size);
+                    let size = (body.pos.2/80.).ceil();
+                    let circle = ellipse::circle(0.0, 0.0, size);
                     let colors = [hex("5c5c5c"),hex("747575"), hex("949494"), hex("aba9a9"), hex("c2c0c0"),hex("dbd9d9"),hex("edebeb"),hex("ffffff")];
-                    let mut size = size as usize;
+                    let mut size = (body.pos.2/100.).ceil() as usize;
                     if size <= 0 {
                         size = 1;
                     }
-                    rectangle(colors[size-1], square, transform, gl);
+                    ellipse(colors[size-1], circle, transform, gl);
             }
         });
     }
@@ -60,7 +60,7 @@ fn main() {
     };
 
     let mut events = Events::new(EventSettings::new());
-    let mut nbodies = Nbodies::new(1000);
+    let mut nbodies = Nbodies::new(500);
 
     while let Some(e) = events.next(&mut window) {
         if let Some(args) = e.render_args() {
