@@ -6,7 +6,7 @@ extern crate piston;
 use glutin_window::GlutinWindow as Window;
 use opengl_graphics::{GlGraphics, OpenGL};
 use piston::event_loop::{EventSettings, Events};
-use piston::input::{RenderArgs, RenderEvent, UpdateArgs, UpdateEvent};
+use piston::input::{RenderArgs, RenderEvent};
 use piston::window::WindowSettings;
 use n_body_sim::*;
 
@@ -19,7 +19,7 @@ impl Sim {
         use graphics::*;
         use graphics::color::*;
         
-        let square = rectangle::square(0.0, 0.0, 2.0);
+        
 
         self.gl.draw(args.viewport(), |c, gl| {
             // Clear the screen.
@@ -29,12 +29,15 @@ impl Sim {
                 let transform = c
                     .transform
                     .trans(body.pos.0, body.pos.1);
-
-                    if body.pos.2 >= 0. {
-                       rectangle(RED, square, transform, gl);
-                    } else {
-                        rectangle(WHITE, square, transform, gl);
+                    
+                    let size = (body.pos.2/100.).ceil();
+                    let square = rectangle::square(0.0, 0.0, size);
+                    let colors = [hex("5c5c5c"),hex("747575"), hex("949494"), hex("aba9a9"), hex("c2c0c0"),hex("dbd9d9"),hex("edebeb"),hex("ffffff")];
+                    let mut size = size as usize;
+                    if size <= 0 {
+                        size = 1;
                     }
+                    rectangle(colors[size-1], square, transform, gl);
             }
         });
     }
