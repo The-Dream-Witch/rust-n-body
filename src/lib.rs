@@ -79,6 +79,10 @@ impl Vec3D {
         Self(rng.gen_range(0.0..800.0), rng.gen_range(0.0..800.0), rng.gen_range(0.0..800.0))
     }
 
+    pub fn new_with_tuple((x,y,z): (f64,f64,f64)) -> Self {
+        Self(x,y,z)
+    }
+
     pub fn bounds(&mut self) {
         if self.0 < 0. {
            self.0 = 800.;
@@ -110,6 +114,13 @@ impl ops::Add for &Vec3D {
     type Output = Vec3D;
     fn add(self, rhs: Self) -> Self::Output {
         Vec3D(self.0 + rhs.0, self.1 + rhs.1, self.2 + rhs.2)
+    }
+}
+
+impl ops::Add<f64> for Vec3D {
+    type Output = Vec3D;
+    fn add(self, rhs: f64) -> Self::Output {
+        Vec3D(self.0 + rhs, self.1 + rhs, self.2 + rhs)
     }
 }
 
@@ -176,55 +187,46 @@ impl Default for Body {
 
 
 
-#[derive(Clone, Debug)]
+#[derive(Clone, Debug, Default)]
 pub struct OctTree {
-    pub roots: Vec<Cells>,
+    pub current_body: Vec<Body>,
+    pub sub_trees: Vec<OctTree>,
+
+    pub center: Vec3D,
+    pub center_mass: Vec3D,
+    
+    pub total_mass: f64,
     pub width: f64,
+    pub num_bodies: f64,
 }
 
 impl OctTree {
-    pub fn new(width: f64) -> Self {
-        let mut rootvec: Vec<Cells> = Vec::new();
-        
-        for _ in 0..8 {
-            rootvec.push(Cells::new(width / 2.));
-        }
-
-        Self {roots: rootvec, width}
-    }
-}
-
-#[derive(Clone, Debug, Default)]
-pub struct Cells {
-    pub occupant: Vec<Body>,
-    pub cells: Vec<Cells>,
-    pub pos: Vec3D,
-    pub aggregate_mass: f64,
-    pub width: f64,
-}
-
-impl Cells {
-    pub fn new(width: f64) -> Self {
-        let mut rootvec: Vec<Cells> = Vec::new();
-        
-        for _ in 0..8 {
-            rootvec.push(Cells::new(width / 2.));
-        }
-        
-        Self {occupant: Vec::with_capacity(1), cells: rootvec, pos: Vec3D::new(), aggregate_mass: 0.0, width}
+    pub fn new(width: f64, center: Vec3D) -> Self {     
+        Self {current_body: Vec::with_capacity(1), sub_trees: Vec::with_capacity(8), center, center_mass: center, total_mass: 0.0, width, num_bodies: 0.}
     }
 
-        pub fn addbody(&mut self, body: Body) {
-            if self.occupant.is_empty() {
-                self.occupant.push(body);
-            } else {
-                for cell in &self.cells {
-                    if f64::abs(cell.pos.0 - body.pos.0) <= (cell.width / 2.)
-                    && f64::abs(cell.pos.1 - body.pos.1) <= (cell.width / 2.)
-                    && f64::abs(cell.pos.2 - body.pos.2) <= (cell.width / 2.) {
-                        return;
-                } 
+    pub fn add_body(&mut self, _body: Body) {
+        
+    }
+
+    pub fn find_subtree(&mut self, body: Body) {
+        let coord_mod = [(1.,1.,1.),(1.,1.,-1.),(1.,-1.,1.),(1.,-1.,-1.),(-1.,1.,1.),(-1.,1.,-1.),(-1.,-1.,1.),(-1.,-1.,-1.)].to_vec();
+        
+        if self.sub_trees.is_empty() {
+            for modifier in coord_mod {
+                let mut sub_tree_center = Vec3D::new_with_tuple(modifier);
+                sub_tree_center = sub_tree_center*(self.center+(self.width/4.));
+                
+                self.sub_trees.push(OctTree::new(self.width / 2., sub_tree_center));
             }
+        }
+
+        for i in 0..8 {
+            if f64::abs(self.sub_trees[i].center.0 - body.pos.0) <= (self.sub_trees[i].width / 2.)
+            && f64::abs(self.sub_trees[i].center.1 - body.pos.1) <= (self.sub_trees[i].width / 2.)
+            && f64::abs(self.sub_trees[i].center.2 - body.pos.2) <= (self.sub_trees[i].width / 2.) {
+                self.sub_trees[i].add_body(body);
+            } 
         }
     }
 }

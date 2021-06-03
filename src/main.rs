@@ -34,7 +34,7 @@ impl Sim {
                     let circle = ellipse::circle(0.0, 0.0, size);
                     let colors = [hex("5c5c5c"),hex("747575"), hex("949494"), hex("aba9a9"), hex("c2c0c0"),hex("dbd9d9"),hex("edebeb"),hex("ffffff")];
                     let mut size = (body.pos.2/100.).ceil() as usize;
-                    if size <= 0 {
+                    if size == 0 {
                         size = 1;
                     }
                     ellipse(colors[size-1], circle, transform, gl);
