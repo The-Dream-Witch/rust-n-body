@@ -5,7 +5,11 @@ use std::default::Default;
 
 
 const G: f64 = 6.67e-11;
-const DT: f64 = 1000.;
+const DT: f64 = 10000.;
+
+pub const XMAX: f64 = 800.;
+pub const YMAX: f64 = 800.;
+pub const ZMAX: f64 = 800.;
 
 #[derive(Clone,Debug)]
 pub struct Nbodies {
@@ -28,7 +32,7 @@ impl Nbodies {
         let mut mags: Vec<f64> = Vec::new();
         let mut k = 0;
 
-        for i in 0..self.bodies.len() {
+        for i in 0..self.bodies.len()-1 {
             let mass1 = self.bodies[i].mass;
             for j in i+1..self.bodies.len() {
                 let mass2 = self.bodies[j].mass;
@@ -168,3 +172,59 @@ impl Default for Body {
     }
 }
 
+/////////////////Under Construction//////////////////////
+
+
+
+#[derive(Clone, Debug)]
+pub struct OctTree {
+    pub roots: Vec<Cells>,
+    pub width: f64,
+}
+
+impl OctTree {
+    pub fn new(width: f64) -> Self {
+        let mut rootvec: Vec<Cells> = Vec::new();
+        
+        for _ in 0..8 {
+            rootvec.push(Cells::new(width / 2.));
+        }
+
+        Self {roots: rootvec, width}
+    }
+}
+
+#[derive(Clone, Debug, Default)]
+pub struct Cells {
+    pub occupant: Vec<Body>,
+    pub cells: Vec<Cells>,
+    pub pos: Vec3D,
+    pub aggregate_mass: f64,
+    pub width: f64,
+}
+
+impl Cells {
+    pub fn new(width: f64) -> Self {
+        let mut rootvec: Vec<Cells> = Vec::new();
+        
+        for _ in 0..8 {
+            rootvec.push(Cells::new(width / 2.));
+        }
+        
+        Self {occupant: Vec::with_capacity(1), cells: rootvec, pos: Vec3D::new(), aggregate_mass: 0.0, width}
+    }
+
+        pub fn addbody(&mut self, body: Body) {
+            if self.occupant.is_empty() {
+                self.occupant.push(body);
+            } else {
+                for cell in &self.cells {
+                    if f64::abs(cell.pos.0 - body.pos.0) <= (cell.width / 2.)
+                    && f64::abs(cell.pos.1 - body.pos.1) <= (cell.width / 2.)
+                    && f64::abs(cell.pos.2 - body.pos.2) <= (cell.width / 2.) {
+                        return;
+                } 
+            }
+        }
+    }
+}

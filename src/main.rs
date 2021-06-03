@@ -48,7 +48,7 @@ fn main() {
     let opengl = OpenGL::V3_2;
 
     // Create an Glutin window.
-    let mut window: Window = WindowSettings::new("N-Body-Sim", [800, 800])
+    let mut window: Window = WindowSettings::new("N-Body-Sim", [YMAX, XMAX])
         .graphics_api(opengl)
         .exit_on_esc(true)
         .build()
