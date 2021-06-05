@@ -5,15 +5,18 @@ use std::default::Default;
 
 
 const G: f64 = 6.67e-11;
-const DT: f64 = 10000.;
+const DT: f64 = 100000.;
 
 pub const XMAX: f64 = 800.;
 pub const YMAX: f64 = 800.;
 pub const ZMAX: f64 = 800.;
+pub const EPSILON: f64 = 0.;
+pub const THETA: f64 = 0.3;
 
 #[derive(Clone,Debug)]
 pub struct Nbodies {
     pub bodies: Vec<Body>,
+    pub tree: Vec<OctTree>,
 }
 
 impl Nbodies {
@@ -24,11 +27,26 @@ impl Nbodies {
             let newbody = Body::new();
             newbodies.push(newbody);
         }
-        Self {bodies: newbodies}
+        Self {bodies: newbodies, tree: Vec::with_capacity(1)}
+    }
+
+    pub fn update_with_tree(&mut self) {
+        println!("Num_bodies: {}", self.bodies.len());
+        self.tree.push(OctTree::new(XMAX, Vec3D::default()));
+        
+        for i in 0..self.bodies.len()-1 {
+            self.tree[0].find_subtree(self.bodies[i].clone());
+        }
+
+        for i in 0..self.bodies.len()-1 {
+            self.tree[0].update_body(&mut self.bodies[i]);
+        }
+
+        self.tree.clear();
     }
     
-    pub fn next(&mut self) {
-        let mut interactions: Vec<Vec3D> = Vec::new();
+    pub fn update_naive(&mut self) {
+        let mut delta_pos: Vec<Vec3D> = Vec::new();
         let mut mags: Vec<f64> = Vec::new();
         let mut k = 0;
 
@@ -38,14 +56,14 @@ impl Nbodies {
                 let mass2 = self.bodies[j].mass;
 
                 //Calculate and store differences between particle positions
-                interactions.push(self.bodies[i].pos-self.bodies[j].pos);
+                delta_pos.push(self.bodies[i].pos-self.bodies[j].pos);
                 
                 //Calculate and store magnitudes
-                mags.push(interactions[i].get_scalar());
+                mags.push(delta_pos[i].get_scalar());
                 
                 //Calculate and apply new velocities
-                self.bodies[i].vel -= interactions[k] * (mass2 * mags[k]) * G;
-                self.bodies[j].vel += interactions[k] * (mass1 * mags[k]) * G;
+                self.bodies[i].vel -= delta_pos[k] * (mass2 * mags[k]) * G;
+                self.bodies[j].vel += delta_pos[k] * (mass1 * mags[k]) * G;
                 k +=1;
             }
         }
@@ -110,7 +128,7 @@ impl Default for Vec3D {
     }
 }
 
-impl ops::Add for &Vec3D {
+impl ops::Add for Vec3D {
     type Output = Vec3D;
     fn add(self, rhs: Self) -> Self::Output {
         Vec3D(self.0 + rhs.0, self.1 + rhs.1, self.2 + rhs.2)
@@ -154,6 +172,12 @@ impl ops::SubAssign for Vec3D {
     }
 }
 
+impl PartialEq for Vec3D {
+    fn eq(&self, rhs: &Self) -> bool {
+        self.0 == rhs.0 && self.1 == rhs.1 && self.2 == rhs.2
+    }
+}
+
 impl ops::Mul<Vec3D> for Vec3D {
     type Output = Vec3D;
     fn mul(self, rhs: Self) -> Self::Output {
@@ -175,6 +199,10 @@ impl Body {
 
         Self{pos: Vec3D::new(), vel: Vec3D::default(), mass: rng.gen_range(1..10) as f64}
     }
+
+    pub fn equal(&self, rhs: &Self) -> bool {
+        self.pos == rhs.pos && self.vel == rhs.vel && self.mass == rhs.mass
+    }
 }
 
 impl Default for Body {
@@ -184,8 +212,6 @@ impl Default for Body {
 }
 
 /////////////////Under Construction//////////////////////
-
-
 
 #[derive(Clone, Debug, Default)]
 pub struct OctTree {
@@ -197,16 +223,30 @@ pub struct OctTree {
     
     pub total_mass: f64,
     pub width: f64,
-    pub num_bodies: f64,
+    pub num_bodies: u32,
 }
 
 impl OctTree {
     pub fn new(width: f64, center: Vec3D) -> Self {     
-        Self {current_body: Vec::with_capacity(1), sub_trees: Vec::with_capacity(8), center, center_mass: center, total_mass: 0.0, width, num_bodies: 0.}
+        Self {current_body: Vec::with_capacity(1), sub_trees: Vec::with_capacity(8), center, center_mass: center, total_mass: 0.0, width, num_bodies: 0}
     }
 
-    pub fn add_body(&mut self, _body: Body) {
+    pub fn add_body(&mut self, body: Body) {
+        self.center_mass = (self.center_mass * self.total_mass + body.pos * body.mass) * (1. / (self.total_mass + body.mass));
+        self.total_mass += body.mass;
         
+        self.num_bodies += 1;
+
+        if self.num_bodies == 1 {
+            self.current_body.push(body);
+        } else {
+            self.find_subtree(body);
+            
+            if self.num_bodies == 2 {
+                let body_to_find = self.current_body.pop().unwrap();
+                self.find_subtree(body_to_find);
+            }
+        } 
     }
 
     pub fn find_subtree(&mut self, body: Body) {
@@ -229,4 +269,39 @@ impl OctTree {
             } 
         }
     }
+
+    pub fn update_body(&self, body: &mut Body) {
+        let delta_pos = self.center_mass - body.pos;
+        let distance_squared = delta_pos.sum_sqrs();
+        if (self.num_bodies == 1 && !(body.equal(&self.current_body[0]))) || self.width * self.width < THETA * THETA * distance_squared {
+            //let distance = (distance_squared + EPSILON * EPSILON).sqrt();
+            let mag = delta_pos.get_scalar();
+            let norm_acc = G * self.total_mass * mag;
+
+            body.vel.0 += delta_pos.0 * norm_acc;
+            body.vel.1 += delta_pos.1 * norm_acc;
+            body.vel.2 += delta_pos.2 * norm_acc;
+            
+            body.pos += body.vel * DT;
+            body.pos.bounds();
+        } else if !self.sub_trees.is_empty() {
+            for sub_tree in &self.sub_trees {
+                if sub_tree.num_bodies != 0 {
+                    sub_tree.update_body(body);
+                }
+            }
+        }
+    }
 }
+/*
+            let mass1 = self.total_mass;
+            let mass2 = body.mass;
+
+            let mag = delta_pos.get_scalar();
+                    
+            body.vel += delta_pos * (mass1 * mag) * G;
+        
+            let vel = body.vel;
+            body.pos += vel * DT;
+            body.pos.bounds();
+*/

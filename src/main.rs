@@ -60,12 +60,13 @@ fn main() {
     };
 
     let mut events = Events::new(EventSettings::new());
-    let mut nbodies = Nbodies::new(500);
+    let mut nbodies = Nbodies::new(1000);
 
     while let Some(e) = events.next(&mut window) {
         if let Some(args) = e.render_args() {
             sim.render(&args,&nbodies);
-            nbodies.next();
+            nbodies.update_with_tree();
+            println!("Looped!");
         }
     }
 }
