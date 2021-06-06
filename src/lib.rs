@@ -24,7 +24,6 @@ impl Nbodies {
         let mut newbodies: Vec<Body> = Vec::new();
 
         for _ in 0..n {
-
             newbodies.push(Body::new());
         }
 
@@ -190,7 +189,6 @@ impl Body {
             vel: Vec3D::default(),
             mass: rng.gen_range(1..100) as f64,
         }
-        
     }
 
     pub fn equal(&self, rhs: &Self) -> bool {
@@ -306,10 +304,8 @@ impl OctTree {
 
         for i in 0..8 {
             if f64::abs(self.sub_trees[i].center.0 - body.pos.0) <= self.sub_trees[i].width
-                && f64::abs(self.sub_trees[i].center.1 - body.pos.1)
-                    <= self.sub_trees[i].width
-                && f64::abs(self.sub_trees[i].center.2 - body.pos.2)
-                    <= self.sub_trees[i].width
+                && f64::abs(self.sub_trees[i].center.1 - body.pos.1) <= self.sub_trees[i].width
+                && f64::abs(self.sub_trees[i].center.2 - body.pos.2) <= self.sub_trees[i].width
             {
                 self.sub_trees[i].add_body(body);
             }
@@ -326,7 +322,6 @@ impl OctTree {
 
             body.vel += delta_pos * self.total_mass * mag * G;
             body.pos += body.vel;
-
         } else if !self.sub_trees.is_empty() {
             for sub_tree in &self.sub_trees {
                 if sub_tree.num_bodies != 0 {
