@@ -38,7 +38,7 @@ Essentially, as the crate stands now, I have managed to:</br></br>
 * Render the results of those solutions in pseudo-3D* using the <a href="https://www.piston.rs/">Piston</a> library
 
 
-Currently, the reasonable limit for n using my naive solution is ~500, while the barnes-hut implementation begins to chug pretty heavily around n = 2000~3000; these values could likey be significantly increased by using a proper matrix multiplication library, CPU multithreading, or GPU-based calculations; I intend to pursue all such options in the future.
+Currently, the reasonable limit for n using my naive solution is `n = ~500`, while the barnes-hut implementation begins to chug pretty heavily around `n = 2000~3000`; these values could likey be significantly increased by using a proper matrix multiplication library, CPU multithreading, or GPU-based calculations; I intend to pursue all such options in the future.
 
 (Note: 'Pseudo-3D' simply means 2D rendering with 3D calculations, utilizing the color and size of a given body to indicate depth / distance)
 
