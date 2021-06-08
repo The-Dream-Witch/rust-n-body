@@ -33,7 +33,7 @@ impl Nbodies {
         self.tree.push(OctTree::new(XMAX, Vec3D::default()));
 
         for i in 0..self.bodies.len() - 1 {
-            self.tree[0].find_subtree(self.bodies[i].clone());
+            self.tree[0].find_subtree(self.bodies[i]);
         }
 
         for i in 0..self.bodies.len() - 1 {

@@ -88,12 +88,6 @@ impl ops::SubAssign for Vec3D {
     }
 }
 
-/*impl PartialEq for Vec3D {
-    fn eq(&self, rhs: &Self) -> bool {
-        self.0 == rhs.0 && self.1 == rhs.1 && self.2 == rhs.2
-    }
-}*/
-
 impl ops::Mul<Vec3D> for Vec3D {
     type Output = Vec3D;
     fn mul(self, rhs: Self) -> Self::Output {

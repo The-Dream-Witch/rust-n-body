@@ -1,5 +1,5 @@
-use crate::vec3d::*;
 use crate::body::*;
+use crate::vec3d::*;
 
 pub const XMAX: f64 = 1920.;
 pub const YMAX: f64 = 1080.;

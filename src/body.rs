@@ -18,38 +18,34 @@ impl Body {
 
         Self {
             pos: Vec3D::new(),
-            vel: Vec3D::default(),
+            vel: Vec3D::new_with_tuple((rng.gen_range(-0.5..0.5) as f64, rng.gen_range(-0.5..0.5) as f64, rng.gen_range(-0.5..0.5) as f64)),
             mass: rng.gen_range(1..100) as f64,
         }
-    }
-
-    pub fn equal(&self, rhs: &Self) -> bool {
-        self.pos == rhs.pos && self.vel == rhs.vel && self.mass == rhs.mass
     }
 
     pub fn bounds(&mut self) {
         if self.pos.0 < 0. {
             self.pos.0 = 0.;
-            self.vel.0 = self.vel.0 * -1.;
+            self.vel.0 *= -1.;
         } else if self.pos.0 > XMAX {
             self.pos.0 = XMAX;
-            self.vel.0 = self.vel.0 * -1.;
+            self.vel.0 *= -1.;
         }
 
         if self.pos.1 < 0. {
             self.pos.1 = 0.;
-            self.vel.1 = self.vel.1 * -1.;
+            self.vel.1 *= -1.;
         } else if self.pos.1 > YMAX {
             self.pos.1 = YMAX;
-            self.vel.1 = self.vel.1 * -1.;
+            self.vel.1 *= -1.;
         }
 
         if self.pos.2 < 0. {
             self.pos.2 = 0.;
-            self.vel.2 = self.vel.2 * -1.;
+            self.vel.2 *= -1.;
         } else if self.pos.2 > ZMAX {
             self.pos.2 = ZMAX;
-            self.vel.2 = self.vel.2 * -1.;
+            self.vel.2 *= -1.;
         }
     }
 }
