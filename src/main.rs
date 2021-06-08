@@ -3,8 +3,9 @@ extern crate graphics;
 extern crate opengl_graphics;
 extern crate piston;
 
+use n_body_sim::{nbodies::Nbodies, nbodies::XMAX, nbodies::YMAX};
+
 use glutin_window::GlutinWindow as Window;
-use n_body_sim::*;
 use opengl_graphics::{GlGraphics, OpenGL};
 use piston::event_loop::{EventSettings, Events};
 use piston::input::{RenderArgs, RenderEvent};
@@ -65,7 +66,7 @@ fn main() {
     };
 
     let mut events = Events::new(EventSettings::new());
-    let mut nbodies = Nbodies::new(1000);
+    let mut nbodies = Nbodies::new(2000);
 
     while let Some(e) = events.next(&mut window) {
         if let Some(args) = e.render_args() {
