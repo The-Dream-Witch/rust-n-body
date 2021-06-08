@@ -2,20 +2,24 @@ use crate::body::*;
 use crate::octtree::*;
 use crate::vec3d::*;
 
+///Const values defining the maximum width, height, and depth
 pub const XMAX: f64 = 1920.;
 pub const YMAX: f64 = 1080.;
 pub const ZMAX: f64 = 800.;
 
+///Const values defining the gravitational constant and the delta time to be used.
 const G: f64 = 6.67e-11;
 const DT: f64 = 1000.;
 
 #[derive(Clone, Debug)]
+///Struct which contains a vector to a set of bodies, as well as an octtree
 pub struct Nbodies {
     pub bodies: Vec<Body>,
     pub tree: Vec<OctTree>,
 }
 
 impl Nbodies {
+    ///Instantiates a new nbodies struct with a custom-defined number of bodies
     pub fn new(n: u32) -> Self {
         let mut newbodies: Vec<Body> = Vec::new();
 
@@ -29,6 +33,7 @@ impl Nbodies {
         }
     }
 
+    ///As the name says, this updates the bodies contained in the nbodies vector, and does so using the octtree.
     pub fn update_with_tree(&mut self) {
         self.tree.push(OctTree::new(XMAX, Vec3D::default()));
 
@@ -44,6 +49,7 @@ impl Nbodies {
         self.tree.clear();
     }
 
+    ///Updates the values for the bodies using the brute-force, loop-based, algorithm.
     pub fn update_naive(&mut self) {
         let mut delta_pos: Vec<Vec3D> = Vec::new();
         let mut mags: Vec<f64> = Vec::new();

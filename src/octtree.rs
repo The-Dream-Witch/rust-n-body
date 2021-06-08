@@ -9,6 +9,7 @@ const G: f64 = 6.67e-11;
 const THETA: f64 = 0.5;
 
 #[derive(Clone, Debug, Default)]
+///This struct is utilized as the basis for all OctTrees, and is also used as its children
 pub struct OctTree {
     pub current_body: Vec<Body>,
     pub sub_trees: Vec<OctTree>,
@@ -22,6 +23,7 @@ pub struct OctTree {
 }
 
 impl OctTree {
+    ///Creates a new OctTree based on the provided width and center values
     pub fn new(width: f64, center: Vec3D) -> Self {
         Self {
             current_body: Vec::with_capacity(1),
@@ -34,6 +36,7 @@ impl OctTree {
         }
     }
 
+    ///Adds a new body to a given octtree node
     pub fn add_body(&mut self, body: Body) {
         self.center_mass = (self.center_mass * self.total_mass + body.pos * body.mass)
             * (1. / (self.total_mass + body.mass));
@@ -53,6 +56,7 @@ impl OctTree {
         }
     }
 
+    ///Finds the appropriate subtree for a given body
     pub fn find_subtree(&mut self, body: Body) {
         if self.width / 2. < 1. {
             return;
@@ -90,6 +94,9 @@ impl OctTree {
         }
     }
 
+    ///Travels down the octtree until it runs into an octtree node which contains only one body, which is not the body currently being updated,
+    ///OR if the width of the current octtree node, squared, is less than theta squared * the distance between the center of mass of the given node,
+    ///and the body being updated.
     pub fn update_body(&self, body: &mut Body) {
         let delta_pos = self.center_mass - body.pos;
         let distance_squared = delta_pos.sum_sqrs();

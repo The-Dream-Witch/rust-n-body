@@ -4,6 +4,7 @@ pub const XMAX: f64 = 1920.;
 pub const YMAX: f64 = 1080.;
 pub const ZMAX: f64 = 800.;
 
+///This is the struct defining what a 'body' / 'particle' / 'planet' / 'star' is; it makes use of the previously established 3D vectors, as well as an f64 to represent the mass.
 #[derive(Clone, Debug, Copy, PartialEq)]
 pub struct Body {
     pub pos: Vec3D,
@@ -12,17 +13,18 @@ pub struct Body {
 }
 
 impl Body {
+    ///Instantiates a new body using pseudo-randomized values for its mass, and its position and velocity vectors
     pub fn new() -> Self {
         use rand::Rng;
         let mut rng = rand::thread_rng();
 
         Self {
-            pos: Vec3D::new(),
-            vel: Vec3D::new_with_tuple((rng.gen_range(-0.5..0.5) as f64, rng.gen_range(-0.5..0.5) as f64, rng.gen_range(-0.5..0.5) as f64)),
+            pos: Vec3D::new_pos(),
+            vel: Vec3D::new_vel(),
             mass: rng.gen_range(1..100) as f64,
         }
     }
-
+    ///Checks to see if a body has gone out of bounds; if so, the body is placed at the edge of the boundary in question, and its velocity in that direction is inverted.
     pub fn bounds(&mut self) {
         if self.pos.0 < 0. {
             self.pos.0 = 0.;
@@ -50,6 +52,7 @@ impl Body {
     }
 }
 
+///Just a default
 impl Default for Body {
     fn default() -> Self {
         Self::new()
