@@ -23,7 +23,7 @@ impl Vec3D {
     ///Returns an f64 which is DT (delta time) over the distance ()
     pub fn get_scalar(&self) -> f64 {
         let sumsqr = self.sum_sqrs();
-        DT / ((sumsqr).sqrt())
+        DT / (sumsqr.sqrt() * sumsqr.sqrt())
     }
     ///Creates a new vec3d to be used as a position vector; its values are pseudo-randomly generated,
     ///and can range anywhere within the available screen real estate, as well as anywhere within the pre-defined depth of the z axis.
@@ -217,6 +217,31 @@ mod vec3d_tests {
 
             assert!(local_mult == testvec * test_num);
             assert!(local_add == testvec + test_num);
+        }
+    }
+
+    #[test]
+    ///Tests the implemented ops for correct outputs against locally done operations on tuple pairs.
+    pub fn vec_dt_over_dist() {
+        use rand::Rng;
+        let mut rng = rand::thread_rng();
+
+        for _ in 0..1000 {
+            let test_tuple = (
+                rng.gen_range(1.0..100.0),
+                rng.gen_range(1.0..100.0),
+                rng.gen_range(1.0..100.0),
+            );
+            let testvec = Vec3D::new_with_tuple(test_tuple);
+            let test_num = rng.gen_range(1.0..100.0);
+            
+            let vec_scalar = testvec.get_scalar();
+            let test_sumsqr = test_tuple.0 * test_tuple.0
+            + test_tuple.1 * test_tuple.1
+            + test_tuple.2 * test_tuple.2;
+            let local_scalar = DT / (test_sumsqr.sqrt() * test_sumsqr.sqrt());
+
+            assert!(vec_scalar == local_scalar);
         }
     }
 }

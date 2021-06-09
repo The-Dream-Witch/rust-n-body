@@ -6,7 +6,7 @@ pub const YMAX: f64 = 1080.;
 pub const ZMAX: f64 = 800.;
 
 const G: f64 = 6.67e-11;
-const THETA: f64 = 0.5;
+const THETA: f64 = 0.45;
 
 #[derive(Clone, Debug, Default)]
 ///This struct is utilized as the basis for all OctTrees, and is also used as its children
