@@ -234,11 +234,11 @@ mod vec3d_tests {
             );
             let testvec = Vec3D::new_with_tuple(test_tuple);
             let test_num = rng.gen_range(1.0..100.0);
-            
+
             let vec_scalar = testvec.get_scalar();
             let test_sumsqr = test_tuple.0 * test_tuple.0
-            + test_tuple.1 * test_tuple.1
-            + test_tuple.2 * test_tuple.2;
+                + test_tuple.1 * test_tuple.1
+                + test_tuple.2 * test_tuple.2;
             let local_scalar = DT / (test_sumsqr.sqrt() * test_sumsqr.sqrt());
 
             assert!(vec_scalar == local_scalar);
