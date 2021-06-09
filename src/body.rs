@@ -58,3 +58,21 @@ impl Default for Body {
         Self::new()
     }
 }
+
+#[cfg(test)]
+mod body_tests {
+    use crate::body::*;
+
+    #[test]
+    pub fn bounds_test() {
+        let mut test_body = Body::new();
+
+        test_body.pos.0 += XMAX;
+        test_body.pos.1 += YMAX;
+        test_body.pos.2 += ZMAX;
+
+        assert!(test_body.pos.0 > XMAX && test_body.pos.1 > YMAX && test_body.pos.2 > ZMAX);
+        test_body.bounds();
+        assert!(test_body.pos.0 <= XMAX && test_body.pos.1 <= YMAX && test_body.pos.2 <= ZMAX);
+    }
+}

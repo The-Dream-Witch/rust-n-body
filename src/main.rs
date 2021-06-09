@@ -3,7 +3,7 @@ extern crate graphics;
 extern crate opengl_graphics;
 extern crate piston;
 
-use n_body_sim::{nbodies::Nbodies, nbodies::XMAX, nbodies::YMAX};
+use n_body_sim::{nbodies::Nbodies, nbodies::XMAX, nbodies::YMAX, parsearg};
 
 use glutin_window::GlutinWindow as Window;
 use opengl_graphics::{GlGraphics, OpenGL};
@@ -66,12 +66,26 @@ fn main() {
     };
 
     let mut events = Events::new(EventSettings::new());
-    let mut nbodies = Nbodies::new(2000);
 
-    while let Some(e) = events.next(&mut window) {
-        if let Some(args) = e.render_args() {
-            sim.render(&args, &nbodies);
-            nbodies.update_with_tree();
+    let args = parsearg();
+
+    let n = args[1];
+    let naive_or_tree = args[0];
+
+    let mut nbodies = Nbodies::new(n);
+    if naive_or_tree == 1 {
+        while let Some(e) = events.next(&mut window) {
+            if let Some(args) = e.render_args() {
+                sim.render(&args, &nbodies);
+                nbodies.update_naive();
+            }
+        }
+    } else {
+        while let Some(e) = events.next(&mut window) {
+            if let Some(args) = e.render_args() {
+                sim.render(&args, &nbodies);
+                nbodies.update_with_tree();
+            }
         }
     }
 }

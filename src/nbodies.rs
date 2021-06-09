@@ -7,9 +7,8 @@ pub const XMAX: f64 = 1920.;
 pub const YMAX: f64 = 1080.;
 pub const ZMAX: f64 = 800.;
 
-///Const values defining the gravitational constant and the delta time to be used.
+///Gravitational constant
 const G: f64 = 6.67e-11;
-const DT: f64 = 1000.;
 
 #[derive(Clone, Debug)]
 ///Struct which contains a vector to a set of bodies, as well as an octtree
@@ -51,6 +50,10 @@ impl Nbodies {
 
     ///Updates the values for the bodies using the brute-force, loop-based, algorithm.
     pub fn update_naive(&mut self) {
+        if self.bodies.len() <= 1 {
+            return;
+        }
+
         let mut delta_pos: Vec<Vec3D> = Vec::new();
         let mut mags: Vec<f64> = Vec::new();
         let mut k = 0;
@@ -76,8 +79,33 @@ impl Nbodies {
         //Compute new positions
         for i in 0..self.bodies.len() {
             let vel = self.bodies[i].vel;
-            self.bodies[i].pos += vel * DT;
+            self.bodies[i].pos += vel;
             self.bodies[i].bounds();
         }
+    }
+}
+
+#[cfg(test)]
+mod nbodies_tests {
+    use crate::nbodies::*;
+
+    #[test]
+    ///Test created to check that the tree algorithm won't update a body using that body as a secondary body
+    pub fn naive_self_test() {
+        let mut nbodies = Nbodies::new(1);
+        let original_body = nbodies.bodies[0].clone();
+
+        nbodies.update_naive();
+        assert!(nbodies.bodies[0] == original_body);
+    }
+
+    #[test]
+    ///Test created to check that the tree algorithm won't update a body using that body as a secondary body
+    pub fn tree_self_test() {
+        let mut nbodies = Nbodies::new(1);
+        let original_body = nbodies.bodies[0].clone();
+
+        nbodies.update_with_tree();
+        assert!(nbodies.bodies[0] == original_body);
     }
 }

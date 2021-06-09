@@ -118,3 +118,105 @@ impl ops::Mul<Vec3D> for Vec3D {
         Vec3D(self.0 * rhs.0, self.1 * rhs.1, self.2 * rhs.2)
     }
 }
+
+#[cfg(test)]
+mod vec3d_tests {
+    use crate::vec3d::*;
+
+    #[test]
+    ///Tests that the output of sumsqrs is correct; itterates 1000 times.
+    pub fn sumsqrs_test() {
+        use rand::Rng;
+        let mut rng = rand::thread_rng();
+
+        for _ in 0..1000 {
+            let test_tuple = (
+                rng.gen_range(1.0..100.0),
+                rng.gen_range(1.0..100.0),
+                rng.gen_range(1.0..100.0),
+            );
+            let test_vec = Vec3D::new_with_tuple(test_tuple);
+            let sum_sqrs = test_vec.sum_sqrs();
+            let test_val = test_tuple.0 * test_tuple.0
+                + test_tuple.1 * test_tuple.1
+                + test_tuple.2 * test_tuple.2;
+
+            assert!(sum_sqrs == test_val);
+        }
+    }
+
+    #[test]
+    ///Tests the implemented ops for correct outputs against locally done operations on tuple pairs.
+    pub fn vec_to_vec_ops_test() {
+        use rand::Rng;
+        let mut rng = rand::thread_rng();
+
+        for _ in 0..1000 {
+            let test_tuple_a = (
+                rng.gen_range(1.0..100.0),
+                rng.gen_range(1.0..100.0),
+                rng.gen_range(1.0..100.0),
+            );
+            let test_tuple_b = (
+                rng.gen_range(1.0..100.0),
+                rng.gen_range(1.0..100.0),
+                rng.gen_range(1.0..100.0),
+            );
+
+            let testvec_a = Vec3D::new_with_tuple(test_tuple_a);
+            let testvec_b = Vec3D::new_with_tuple(test_tuple_b);
+
+            let local_mult = Vec3D::new_with_tuple((
+                test_tuple_a.0 * test_tuple_b.0,
+                test_tuple_a.1 * test_tuple_b.1,
+                test_tuple_a.2 * test_tuple_b.2,
+            ));
+            let local_add = Vec3D::new_with_tuple((
+                test_tuple_a.0 + test_tuple_b.0,
+                test_tuple_a.1 + test_tuple_b.1,
+                test_tuple_a.2 + test_tuple_b.2,
+            ));
+            let local_sub = Vec3D::new_with_tuple((
+                test_tuple_a.0 - test_tuple_b.0,
+                test_tuple_a.1 - test_tuple_b.1,
+                test_tuple_a.2 - test_tuple_b.2,
+            ));
+
+            assert!(local_mult == testvec_a * testvec_b);
+            assert!(local_add == testvec_a + testvec_b);
+            assert!(local_sub == testvec_a - testvec_b)
+        }
+    }
+
+    #[test]
+    ///Tests the implemented ops for correct outputs against locally done operations on tuple pairs.
+    pub fn vec_to_f64_ops_test() {
+        use rand::Rng;
+        let mut rng = rand::thread_rng();
+
+        for _ in 0..1000 {
+            let test_tuple = (
+                rng.gen_range(1.0..100.0),
+                rng.gen_range(1.0..100.0),
+                rng.gen_range(1.0..100.0),
+            );
+            let test_num = rng.gen_range(1.0..100.0);
+
+            let testvec = Vec3D::new_with_tuple(test_tuple);
+
+            let local_mult = Vec3D::new_with_tuple((
+                test_tuple.0 * test_num,
+                test_tuple.1 * test_num,
+                test_tuple.2 * test_num,
+            ));
+            let local_add = Vec3D::new_with_tuple((
+                test_tuple.0 + test_num,
+                test_tuple.1 + test_num,
+                test_tuple.2 + test_num,
+            ));
+
+            assert!(local_mult == testvec * test_num);
+            assert!(local_add == testvec + test_num);
+        }
+    }
+}

@@ -48,4 +48,3 @@ The main body of the program contains the rendering
 
 <h3>How do we know it works/doesn't break?</h3>
 
-<div align = "center">//////////////Under Construction//////////////</div>
