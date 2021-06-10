@@ -1,14 +1,9 @@
 use crate::body::*;
 use crate::octtree::*;
 use crate::vec3d::*;
+use crate::constants::*;
 
-///Const values defining the maximum width, height, and depth
-pub const XMAX: f64 = 1920.;
-pub const YMAX: f64 = 1080.;
-pub const ZMAX: f64 = 800.;
-
-///Gravitational constant
-const G: f64 = 6.67e-11;
+pub const DT: f64 = 5.;
 
 #[derive(Clone, Debug)]
 ///Struct which contains a vector to a set of bodies, as well as an octtree
@@ -79,7 +74,7 @@ impl Nbodies {
         //Compute new positions
         for i in 0..self.bodies.len() {
             let vel = self.bodies[i].vel;
-            self.bodies[i].pos += vel;
+            self.bodies[i].pos += vel * DT;
             self.bodies[i].bounds();
         }
     }

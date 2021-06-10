@@ -3,7 +3,11 @@ extern crate graphics;
 extern crate opengl_graphics;
 extern crate piston;
 
-use n_body_sim::{nbodies::Nbodies, nbodies::XMAX, nbodies::YMAX, parsearg};
+use n_body_sim::{
+    constants::{XMAX, YMAX},
+    nbodies::Nbodies,
+    parsearg,
+};
 
 use glutin_window::GlutinWindow as Window;
 use opengl_graphics::{GlGraphics, OpenGL};

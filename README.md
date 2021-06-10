@@ -12,6 +12,8 @@ Hey there! Welcome to my final project for Bart Massey's Introduction to Rust cl
 </br></br>
 This is a very bare-bones code base which focuses on implementing methods to calculate newtonian gravitation interactions between some number of bodies, n, and then display the results of those calculations graphically.
 
+</br>The inspiration for this project was YouTube video of an <a href="https://www.youtube.com/watch?v=x62gOfZ9hCw">ASCII Simulation of Colliding Galaxies</a>, the codebase for which can be found at <a href="https://github.com/DinoZ1729/Galaxy">DinoZ1729's Github</a>.
+
 <h3>So, what does it actually do?</h3>
 
 At a macro level, the crate will do the following:
@@ -21,6 +23,7 @@ At a macro level, the crate will do the following:
 * Display the results of those operations, graphically, in pseudo-3D (2D rendering with 3D calculations, utilizing colour and size of particles to indicate depth / distance)
 
 Currently, the reasonable limit for n using my naive solution is `n = ~500`, while the barnes-hut implementation begins to chug pretty heavily around `n = 2000~3000`; these values could likey be significantly increased by using a proper vector / matrix multiplication library, CPU multithreading, or GPU-based calculations.
+
 <h3>What Went Wrong?</h3>
 Originally, the intent with this project was to develop a solution to the N-Body problem with the following characterstics:
 
@@ -29,8 +32,6 @@ Originally, the intent with this project was to develop a solution to the N-Body
 * Could create large interacting bodies such as galaxies
 * Utilizes GPU for calculations
 * Utilizes Barnes-Hut algorithm
-
-The inspiration for this was YouTube video of an <a href="https://www.youtube.com/watch?v=x62gOfZ9hCw">ASCII Simulation of Colliding Galaxies</a>, the codebase for which can be found at <a href="https://github.com/DinoZ1729/Galaxy">DinoZ1729's Github</a>.
 
 However, going into project this I had little-to-no experience:
 * Working with graphical libraries, either 2D or 3D.
@@ -41,6 +42,8 @@ However, going into project this I had little-to-no experience:
 So, given that I had basically no idea what I was doing, and that nearly all of the work was performed in the last week-and-a-half of the term due to other assignments taking short-term precedence, it should come as no surprise that I didn't manage to hit ***all*** of the (honestly, very hubristic) goals I'd set for myself. 
 
 In particular, GPU calculations, true 3D, and the n = 10,000 target had to be droppped.
+
+Also, I'll be honest; while the code as written appears to work, I can't claim to be confident that the math comports with reality.
 
 Still, I managed to hit enough of my goals that I'm proud of what I managed to produce in such a short time. If nothing else, this was an incredible learning experience, and I fully intend to continue my work on this far past the assignments due date in an attempt to reach those goals I hadn't managed to hit.
 
@@ -61,15 +64,16 @@ TLDR:
 
 <h3>How do we know it works/doesn't break?</h3>
 
-I've managed to implement a fair number of unit tests for most things:
+I mean, we don't. Not without, ideally, formal verification, which is far, far beyond the scope of either my abilities or this project. Still, I've managed to implement a fair number of unit tests for most things, which should at least ensure that the foundational items work as intended:
+* <b>Vec3D: </b> Has tests which generate pseudo-random values and perform local calculations to check that the implemented ops, the sum of squares function, and the scalar (basically just returns DT / dist^2) return the correct values.
 
-<h5>Vec3D</h5> Has tests which generate pseudo-random values and perform local calculations to check that the implemented ops, the sum of squares function, and the scalar (basically just returns DT / r^2) return the correct values.
+* <b>Nbodies:</b> Implements tests which try to make sure that the algorithm's won't attempt to update a body if the thing it's updating against is that same body.
 
-<h5>Nbodies</h5> Implements tests which try to make sure that the algorithm's won't attempt to update a body if the thing it's updating against is that same body.
+* <b>Parsearg and parsenum: </b>The argument parser and number parser functions implement a huge battery of tests which try to make sure that there isn't
 
-<h5>Parsearg and parsenum</h5>The argument parser and number parser functions implement a huge battery of tests which try to make sure that there isn't
-<h5>Body</h5>
-The only function really implemented for body is the bounds function, and so that is what the sole unit test here focuses on; a body is created and its position values are generated at random, but are positive. The coordinates are then increased to beyond the allowable values 
+* <b>Body: </b>The only function really implemented for body is the bounds function, and so that is what the sole unit test here focuses on; a body is created and its position values are generated at random, but are positive. The coordinates are then increased to beyond the allowable values 
+
+* <b>OctTree: </b>Ah, yeah. This one. Honestly, there doesn't really appear to be any clear options for unit tests here; they likely exist, but I'm not currently clever enough to think of them within the time remaining.
 
 <h3>Acknowledgements and Citations</h3>
 I came into this project feeling pretty overwhelmed by the scope of what I'd agreed to, especially considering I've never worked on anything grapical besides some ncurses, my practical

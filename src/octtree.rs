@@ -1,12 +1,8 @@
 use crate::body::*;
 use crate::vec3d::*;
+use crate::constants::*;
 
-pub const XMAX: f64 = 1920.;
-pub const YMAX: f64 = 1080.;
-pub const ZMAX: f64 = 800.;
-
-const G: f64 = 6.67e-11;
-const THETA: f64 = 0.45;
+pub const DT: f64 = 0.25;
 
 #[derive(Clone, Debug, Default)]
 ///This struct is utilized as the basis for all OctTrees, and is also used as its children
@@ -106,7 +102,7 @@ impl OctTree {
             let mag = delta_pos.get_scalar();
 
             body.vel += delta_pos * self.total_mass * mag * G;
-            body.pos += body.vel;
+            body.pos += body.vel * DT;
         } else if !self.sub_trees.is_empty() {
             for sub_tree in &self.sub_trees {
                 if sub_tree.num_bodies != 0 {

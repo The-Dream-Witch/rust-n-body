@@ -1,6 +1,7 @@
 use std::env;
 
 pub mod body;
+pub mod constants;
 pub mod nbodies;
 pub mod octtree;
 pub mod vec3d;
@@ -19,6 +20,8 @@ pub fn parsearg() -> Vec<u32> {
 
     if num[0] > 2 || num[0] < 1 {
         error("error: first argument must be 1 or 2");
+    } else if num[1] < 2 {
+        error("error: second argument must be at least 2");
     }
     num
 }

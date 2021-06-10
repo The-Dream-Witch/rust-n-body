@@ -3,12 +3,7 @@ extern crate rand;
 use std::default::Default;
 use std::ops;
 
-///Const values defining the maximum width, height, and depth
-pub const XMAX: f64 = 1920.;
-pub const YMAX: f64 = 1080.;
-pub const ZMAX: f64 = 800.;
-
-const DT: f64 = 1000.;
+use crate::constants::*;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 ///The Vec3D struct is used for position and velocity vectors within the rest of the program, and its many implementations allow operations to occur (+, *, +=, etc)
@@ -22,8 +17,8 @@ impl Vec3D {
     }
     ///Returns an f64 which is DT (delta time) over the distance ()
     pub fn get_scalar(&self) -> f64 {
-        let sumsqr = self.sum_sqrs();
-        DT / (sumsqr.sqrt() * sumsqr.sqrt())
+        let distance = (self.sum_sqrs() + SOFTENING * SOFTENING).sqrt();
+        1.0 / (distance * distance * distance)
     }
     ///Creates a new vec3d to be used as a position vector; its values are pseudo-randomly generated,
     ///and can range anywhere within the available screen real estate, as well as anywhere within the pre-defined depth of the z axis.

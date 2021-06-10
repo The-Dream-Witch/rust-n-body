@@ -1,8 +1,6 @@
 use crate::vec3d::*;
 
-pub const XMAX: f64 = 1920.;
-pub const YMAX: f64 = 1080.;
-pub const ZMAX: f64 = 800.;
+use crate::constants::*;
 
 ///This is the struct defining what a 'body' / 'particle' / 'planet' / 'star' is; it makes use of the previously established 3D vectors, as well as an f64 to represent the mass.
 #[derive(Clone, Debug, Copy, PartialEq)]
@@ -21,7 +19,7 @@ impl Body {
         Self {
             pos: Vec3D::new_pos(),
             vel: Vec3D::new_vel(),
-            mass: rng.gen_range(1..100) as f64,
+            mass: rng.gen_range(1..(1e30 as i32)) as f64,
         }
     }
     ///Checks to see if a body has gone out of bounds; if so, the body is placed at the edge of the boundary in question, and its velocity in that direction is inverted.
