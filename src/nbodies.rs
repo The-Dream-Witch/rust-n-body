@@ -1,7 +1,7 @@
 use crate::body::*;
+use crate::constants::*;
 use crate::octtree::*;
 use crate::vec3d::*;
-use crate::constants::*;
 
 pub const DT: f64 = 5.;
 

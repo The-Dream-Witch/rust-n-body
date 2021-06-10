@@ -7,4 +7,3 @@ pub const ZMAX: f64 = 800.;
 pub const G: f64 = 6.67e-11;
 pub const THETA: f64 = 0.5;
 pub const SOFTENING: f64 = 10.;
-

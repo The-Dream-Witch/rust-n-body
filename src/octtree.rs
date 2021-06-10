@@ -1,6 +1,6 @@
 use crate::body::*;
-use crate::vec3d::*;
 use crate::constants::*;
+use crate::vec3d::*;
 
 pub const DT: f64 = 0.25;
 
