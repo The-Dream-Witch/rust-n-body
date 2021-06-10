@@ -10,7 +10,7 @@ Homework 4
 <H3>Intro</H3>
 Hey there! Welcome to my final project for Bart Massey's Introduction to Rust class.
 </br></br>
-This is a very bare-bones, open source under the MIT License, code base which focuses on implementing methods to calculate newtonian gravitation interactions between some number of bodies, n, and then display the results of those calculations graphically.
+This is a very bare-bones, open source under the MIT License, code base which focuses on implementing methods to calculate newtonian gravitational interactions between some user-defined number of bodies, n, and then display the results of those calculations graphically.
 
 </br><div align ="center"><a href='https://postimages.org/' target='_blank'><img src='https://i.postimg.cc/3R29C44G/n-body.gif' border='0' alt='n-body'/></a></br><b>N-Body-Sim in Action</b></div>
 
