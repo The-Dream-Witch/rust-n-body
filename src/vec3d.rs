@@ -39,9 +39,9 @@ impl Vec3D {
         let mut rng = rand::thread_rng();
 
         Self(
-            rng.gen_range(-0.5..0.5),
-            rng.gen_range(-0.5..0.5),
-            rng.gen_range(-0.5..0.5),
+            rng.gen_range(-0.25..0.25),
+            rng.gen_range(-0.25..0.25),
+            rng.gen_range(-0.25..0.25),
         )
     }
     ///Allows creation of a custom-defined Vec3D
