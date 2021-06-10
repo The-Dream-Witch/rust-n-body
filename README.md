@@ -10,7 +10,7 @@ Homework 4
 <H3>Intro</H3>
 Hey there! Welcome to my final project for Bart Massey's Introduction to Rust class.
 </br></br>
-This is a very bare-bones code base which focuses on implementing methods to calculate newtonian gravitation interactions between some number of bodies, n, and then display the results of those calculations graphically.
+This is a very bare-bones, open source under the MIT License, code base which focuses on implementing methods to calculate newtonian gravitation interactions between some number of bodies, n, and then display the results of those calculations graphically.
 
 </br>The inspiration for this project was a YouTube video of an <a href="https://www.youtube.com/watch?v=x62gOfZ9hCw">ASCII Simulation of Colliding Galaxies</a>, the codebase for which can be found at <a href="https://github.com/DinoZ1729/Galaxy">DinoZ1729's Github</a>.
 
